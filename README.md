@@ -1,12 +1,11 @@
 # workerchat-with-E2EE
 
-一个基于 Cloudflare Workers 和 OpenPGP 的端到端加密聊天室应用。
+一个基于 Cloudflare Workers 和 OpenPGP 的极简端到端加密聊天室应用。
 
 ## ✨ 特性
 
-- 🔒 **端到端加密** - 使用 OpenPGP 协议确保消息安全
+- 🔒 **端到端加密** - 使用 PGP 协议确保消息安全
 - 🌐 **无服务器架构** - 基于 Cloudflare Workers 和 Durable Objects
-- 📱 **响应式设计** - 支持桌面端和移动端
 - 🔑 **密钥管理** - 支持生成、导入和导出 PGP 密钥
 - 💬 **实时通信** - WebSocket 实现实时消息传输
 
@@ -26,14 +25,11 @@
 
 - **后端**: Cloudflare Workers + Durable Objects + WebSocket
 - **前端**: 原生 JavaScript + OpenPGP.js + CSS3
-- **加密**: ECC Curve25519 + OpenPGP 标准
 
 ## 🔐 安全特性
 
 - 消息在客户端加密，服务器无法读取明文
 - 私钥仅存储在用户浏览器本地(localStorage)
-- 支持多用户加密通信
-    - 新用户无法查看加入前的信息
 - WSS 加密传输
 
 ## 📄 许可证
