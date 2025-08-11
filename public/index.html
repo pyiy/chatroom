@@ -398,7 +398,7 @@
         const generateKeysBtn = document.getElementById('generateKeys');
         const importPublicKeyBtn = document.getElementById('importPublicKey');
         const importPrivateKeyBtn = document.getElementById('importPrivateKey');
-        const copyKeyBtn = document.getElementById('copyPublicKey');
+        const copyPublicKeyBtn = document.getElementById('copyPublicKey');
         const keyIdEl = document.getElementById('keyId');
         const notificationEl = document.getElementById('notification');
         const debugInfoEl = document.getElementById('debugInfo');
@@ -430,11 +430,6 @@
             const timestamp = new Date().toLocaleTimeString();
             debugInfoEl.textContent += `${timestamp}: ${message}\n`;
             debugInfoEl.scrollTop = debugInfoEl.scrollHeight;
-        }
-        
-        // 生成房间ID
-        function generateRoomId() {
-            return Math.random().toString().substr(2, 64);
         }
         
         // 显示通知
@@ -748,6 +743,11 @@
             }
         }
         
+        // 导出密钥
+        async function exportKey() {
+            alert("Public Key: \n" + publicKey + "\n\nPrivate Key: \n" + privateKey);
+        }
+
         // 生成新密钥
         async function generateNewKeys() {
             try {
@@ -759,8 +759,8 @@
                     type: 'ecc',
                     curve: 'curve25519',
                     userIDs: [{ 
-                        name: `用户${Math.floor(Math.random() * 1000)}`,
-                        email: `user${Math.floor(Math.random() * 1000)}@example.com`
+                        name: prompt('请输入您的名字'),
+                        email: prompt('请输入您的邮箱')
                     }],
                     passphrase: '' // 不使用密码保护
                 });
@@ -839,7 +839,12 @@
                 
             } catch (error) {
                 debugLog('解密失败: ' + error.message);
-                displayEncryptedMessage(data, '解密失败: ' + error.message);
+                displayEncryptedMessage({
+                    senderId: data.senderId,
+                    text: data.encryptedData,
+                    timestamp: data.timestamp,
+                    isSelf: data.senderId === userId
+                }, '解密失败: ' + error.message);
             }
         }
         // 从URL参数获取房间ID
@@ -856,28 +861,26 @@
         }
 
         // 显示加密消息（无法解密时）
-        function displayEncryptedMessage(data, reason) {
+        function displayEncryptedMessage(message, reason) {
             const messageEl = document.createElement('div');
-            messageEl.className = 'message received encrypted';
-            
-            const senderInfo = users.get(data.senderId) || {
-                name: data.senderId.slice(24, 40),
+            messageEl.className = `message ${message.isSelf ? 'sent' : 'received'} encrypted`;
+            const timeString = new Date(message.timestamp).toLocaleTimeString();
+            const senderInfo = users.get(message.senderId) || {
+                name: message.senderId.slice(24, 40),
                 email: ''
-            };
-            
-            const timeString = new Date(data.timestamp).toLocaleTimeString();
-            
+            }
+
             messageEl.innerHTML = `
                 <div class="sender-info">
-                    <span class="sender-name">${senderInfo.name}</span>
-                    <span class="sender-id">[${senderId.slice(24, 40)}]</span>
+                    <span class="sender-name">${senderInfo.name}
+                    <span class="sender-id">[${message.senderId.slice(24, 40)}]</span></span>
                     <span class="message-time">${timeString}</span>
                 </div>
                 <div class="message-text">
                     <div style="font-style: italic; color: #ff6b6b;">🔒 ${reason}</div>
                     <details style="margin-top: 8px;">
                         <summary style="cursor: pointer; font-size: 0.8em;">查看加密数据</summary>
-                        <pre style="margin-top: 5px; font-size: 0.7em; white-space: pre-wrap; word-break: break-all;">${data.encryptedData.substring(0, 200)}...</pre>
+                        <pre style="margin-top: 5px; font-size: 0.7em; white-space: pre-wrap; word-break: break-all;">${message.text}</pre>
                     </details>
                 </div>
             `;
@@ -903,9 +906,14 @@
                     <span class="sender-name">${senderInfo.name} <span class="sender-id">[${senderId.slice(24, 40)}]</span></span>
                     <span class="message-time">${timeString}</span>
                 </div>
-                <div class="message-text">${text}</div>
             `;
-            
+
+            // 创建消息文本部分
+            const messageTextEl = document.createElement('div');
+            messageTextEl.className = 'message-text';
+            messageTextEl.textContent = text; // 防XSS
+            messageEl.appendChild(messageTextEl);
+
             messagesEl.appendChild(messageEl);
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
@@ -1018,7 +1026,7 @@
             generateKeysBtn.addEventListener('click', generateNewKeys);
             importPublicKeyBtn.addEventListener('click', () => importKey('public'));
             importPrivateKeyBtn.addEventListener('click', () => importKey('private'));
-            copyKeyBtn.addEventListener('click', copyPublicKey);
+            copyPublicKeyBtn.addEventListener('click', copyPublicKey);
         }
         
         // ========================
@@ -1081,35 +1089,6 @@
             // 设置事件监听器
             setupEventListeners();
         });
-
-		// 从后端获取房间 ID
-		async function fetchRoomId() {
-		    try {
-		        const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-		        const host = window.location.host;
-			
-		        const response = await fetch(`${protocol}//${host}/api/room`, {
-		            method: 'POST',
-		            headers: {
-		                'Content-Type': 'application/json',
-		            },
-		        });
-			
-		        if (!response.ok) {
-		            throw new Error(`HTTP错误! 状态: ${response.status}`);
-		        }
-			
-		        const roomId = await response.text();
-		        if (!roomId || roomId.length !== 64) {
-		            throw new Error('无效的房间ID');
-		        }
-			
-		        return roomId;
-		    } catch (error) {
-		        debugLog('从后端获取房间 ID 失败: ' + error.message);
-		        throw error;
-		    }
-		}
 
     </script>
 </body>
