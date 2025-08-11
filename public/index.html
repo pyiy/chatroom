@@ -984,30 +984,70 @@
         function displayEncryptedMessage(message, reason) {
             const messageEl = document.createElement('div');
             messageEl.className = `message ${message.isSelf ? 'sent' : 'received'} encrypted`;
+        
             const timeString = new Date(message.timestamp).toLocaleTimeString();
             const senderInfo = users.get(message.senderId) || {
                 name: message.senderId.slice(-16),
                 email: ''
-            }
-
-            messageEl.innerHTML = `
-                <div class="sender-info">
-                    <span class="sender-name">${senderInfo.name}
-                    <span class="sender-id">[${message.senderId.slice(-16)}]</span></span>
-                    <span class="message-time">${timeString}</span>
-                </div>
-                <div class="message-text">
-                    <div style="font-style: italic; color: #ff6b6b;">🔒 ${reason}</div>
-                    <details style="margin-top: 8px;">
-                        <summary style="cursor: pointer; font-size: 0.8em;">查看加密数据</summary>
-                        <pre style="margin-top: 5px; font-size: 0.7em; white-space: pre-wrap; word-break: break-all;">${message.text}</pre>
-                    </details>
-                </div>
-            `;
-            
+            };
+        
+            // 创建发送者信息部分
+            const senderInfoEl = document.createElement('div');
+            senderInfoEl.className = 'sender-info';
+        
+            const senderNameEl = document.createElement('span');
+            senderNameEl.className = 'sender-name';
+            senderNameEl.textContent = senderInfo.name;
+        
+            const senderIdEl = document.createElement('span');
+            senderIdEl.className = 'sender-id';
+            senderIdEl.textContent = `[${message.senderId.slice(-16)}]`;
+        
+            const messageTimeEl = document.createElement('span');
+            messageTimeEl.className = 'message-time';
+            messageTimeEl.textContent = timeString;
+        
+            senderInfoEl.appendChild(senderNameEl);
+            senderInfoEl.appendChild(senderIdEl);
+            senderInfoEl.appendChild(messageTimeEl);
+        
+            // 创建消息文本部分
+            const messageTextEl = document.createElement('div');
+            messageTextEl.className = 'message-text';
+        
+            const encryptedNoticeEl = document.createElement('div');
+            encryptedNoticeEl.style.fontStyle = 'italic';
+            encryptedNoticeEl.style.color = '#ff6b6b';
+            encryptedNoticeEl.textContent = `🔒 ${reason}`;
+        
+            const detailsEl = document.createElement('details');
+            detailsEl.style.marginTop = '8px';
+        
+            const summaryEl = document.createElement('summary');
+            summaryEl.style.cursor = 'pointer';
+            summaryEl.style.fontSize = '0.8em';
+            summaryEl.textContent = '查看加密数据';
+        
+            const preEl = document.createElement('pre');
+            preEl.style.marginTop = '5px';
+            preEl.style.fontSize = '0.7em';
+            preEl.style.whiteSpace = 'pre-wrap';
+            preEl.style.wordBreak = 'break-all';
+            preEl.textContent = message.text; // 使用 textContent 防止 XSS
+        
+            detailsEl.appendChild(summaryEl);
+            detailsEl.appendChild(preEl);
+        
+            messageTextEl.appendChild(encryptedNoticeEl);
+            messageTextEl.appendChild(detailsEl);
+        
+            messageEl.appendChild(senderInfoEl);
+            messageEl.appendChild(messageTextEl);
+        
             messagesEl.appendChild(messageEl);
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
+
         
         // 显示消息
         function displayMessage({ senderId, text, timestamp, isSelf }) {
@@ -1021,17 +1061,45 @@
             
             const timeString = new Date(timestamp).toLocaleTimeString();
             
-            messageEl.innerHTML = `
-                <div class="sender-info">
-                    <span class="sender-name">${senderInfo.name} <span class="sender-id">[${senderId.slice(-16)}]</span></span>
-                    <span class="message-time">${timeString}</span>
-                </div>
-                <div class="message-text">${text}</div>
-            `;
+            // 创建发送者信息部分
+            const senderInfoEl = document.createElement('div');
+            senderInfoEl.className = 'sender-info';
             
+            // 创建发送者名称部分
+            const senderNameEl = document.createElement('span');
+            senderNameEl.className = 'sender-name';
+            senderNameEl.textContent = senderInfo.name;
+            
+            // 创建发送者ID部分
+            const senderIdEl = document.createElement('span');
+            senderIdEl.className = 'sender-id';
+            senderIdEl.textContent = `[${senderId.slice(-16)}]`;
+            
+            // 将名称和ID添加到发送者名称元素中
+            senderNameEl.appendChild(senderIdEl);
+            
+            // 创建时间部分
+            const messageTimeEl = document.createElement('span');
+            messageTimeEl.className = 'message-time';
+            messageTimeEl.textContent = timeString;
+            
+            // 将名称和时间添加到发送者信息元素中
+            senderInfoEl.appendChild(senderNameEl);
+            senderInfoEl.appendChild(messageTimeEl);
+            
+            // 创建消息文本部分
+            const messageTextEl = document.createElement('div');
+            messageTextEl.className = 'message-text';
+            messageTextEl.textContent = text; // 使用textContent而不是innerHTML防止XSS
+            
+            // 将所有部分添加到消息元素中
+            messageEl.appendChild(senderInfoEl);
+            messageEl.appendChild(messageTextEl);
+        
             messagesEl.appendChild(messageEl);
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
+
         
         // 更新用户列表
         function updateUserList(userList) {
