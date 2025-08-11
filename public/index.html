@@ -27,7 +27,8 @@
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             color: var(--light);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
         }
         
         .container {
@@ -36,14 +37,14 @@
             display: grid;
             grid-template-columns: 300px 1fr;
             gap: 20px;
-            height: calc(100vh - 40px);
+            height: 100vh;
+            padding: 15px;
         }
         
         .panel {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.18);
             overflow: hidden;
@@ -52,14 +53,16 @@
         }
         
         .header {
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            padding: 15px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative; /* 确保内部元素定位正确 */
         }
         
         h1, h2, h3 {
             color: white;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .connection-status {
@@ -85,6 +88,7 @@
         .user-list {
             flex: 1;
             overflow-y: auto;
+            padding: 0 10px;
         }
         
         .user-item {
@@ -132,29 +136,27 @@
             flex: 1;
             overflow-y: auto;
             padding: 10px;
-            margin-bottom: 15px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
         }
         
         .message {
             padding: 12px;
             margin-bottom: 10px;
-            border-radius: 10px;
-            max-width: 80%;
+            border-radius: 12px;
+            max-width: 90%;
             word-wrap: break-word;
         }
         
         .message.sent {
             background: var(--primary);
             align-self: flex-end;
-            margin-left: 20%;
+            margin-left: 10%;
         }
         
         .message.received {
             background: var(--dark);
             align-self: flex-start;
-            margin-right: 20%;
+            margin-right: 10%;
         }
         
         .message.encrypted {
@@ -172,7 +174,7 @@
         
         .sender-name {
             color: #4ec9b0;
-            font-size:large;
+            font-size: large;
         }
         
         .sender-id {
@@ -193,6 +195,9 @@
         .input-area {
             display: flex;
             gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         textarea {
@@ -227,7 +232,7 @@
         
         .key-management {
             margin-top: 20px;
-            padding-top: 15px;
+            padding: 15px 10px 10px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
         
@@ -242,7 +247,7 @@
         .key-id {
             word-break: break-all;
             font-family: monospace;
-            font-size: 9%;
+            font-size: 0.65em;
             color: #4ec9b0;
         }
         
@@ -306,9 +311,143 @@
             margin-bottom: 10px;
             word-break: break-all;
         }
+
+        #roomName {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: calc(100% - 60px); /* 右侧预留40px空间 */
+            display: inline-block; /* 确保宽度自适应 */
+            vertical-align: bottom; /* 保持垂直对齐 */
+            padding-right: 10px; /* 右侧内边距 */
+        }
+
+        /* 移动端优化样式 */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+                gap: 0;
+                padding: 0;
+            }
+
+            .panel {
+                border-radius: 0;
+                height: 100vh;
+                box-shadow: none;
+                border: none;
+            }
+
+            .chat-area {
+                height: 100%;
+            }
+
+            .messages {
+                border-radius: 0;
+                padding-bottom: 90px; /* 防止输入框遮挡消息 */
+            }
+            
+            /* 管理面板样式 */
+            .manage-area {
+                position: fixed;
+                top: 0;
+                left: -100%; 
+                width: 80%;
+                height: 100vh !important;
+                border-radius: 0 15px 15px 0;
+                z-index: 101;
+                transition: left 0.3s ease-out;
+            }   
+
+            .manage-area.expanded {
+                left: 0; 
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 100;
+            }
+            
+            .slide-toggle {
+                position: fixed;
+                top: 18px;
+                left: 16px;
+                z-index: 102;
+                background: rgba(255, 255, 255, 0.16);
+                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+                transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            }
+            
+            .material-symbols-outlined {
+                font-size: 28px;
+                color: white;
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+                transition: transform 0.3s ease;
+            }
+            
+            .slide-toggle.expanded .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 28;
+                transform: rotate(180deg);
+            }
+            
+            /* 移动端输入区域优化 */
+            .input-area {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                padding: 15px;
+                border-radius: 0;
+                z-index: 99;
+                transition: transform 0.2s ease;
+            }
+            
+            textarea {
+                min-height: 50px;
+                font-size: 16px; /* 提高移动端可读性 */
+            }
+            
+            button#sendButton {
+                min-width: 70px;
+                align-self: flex-end;
+            }
+            
+            .room-url {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 0.75em;
+            }
+
+            #roomName {
+                max-width: calc(100% - 80px); /* 移动端预留更多空间 */
+                padding-right: 5px;
+            }
+        }
+
     </style>
 </head>
 <body>
+    <div id="overlay" class="overlay"></div>
+
     <div class="container">
         <div class="panel manage-area">
             <div class="header">
@@ -344,38 +483,16 @@
                 <div class="room-url" id="roomUrl"></div>
             </div>
             <div class="messages" id="messages"></div>
-            <div class="input-area">
-                <textarea id="messageInput" placeholder="输入消息..." disabled></textarea>
-                <button id="sendButton" disabled>发送</button>
-            </div>
+                <div class="input-area">
+                    <textarea id="messageInput" placeholder="输入消息..." rows="1" disabled></textarea>
+                    <button id="sendButton" disabled>发送</button>
+                </div>
         </div>
     </div>
     
     <div class="notification" id="notification"></div>
 
     <script>
-        (function() {
-            // 检测移动设备
-            function isMobile() {
-                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                    || window.innerWidth <= 768;
-            }
-
-            // 获取当前参数
-            const params = window.location.search;
-            const currentPath = window.location.pathname;
-
-            // 执行跳转
-            if (isMobile() && !currentPath.startsWith('/wap')) {
-                // 移动端跳转到 /wap
-                window.location.href = '/wap' + params;
-            } else if (!isMobile() && currentPath.startsWith('/wap')) {
-                // PC端跳转到根目录
-                window.location.href = '/' + params;
-            }
-        })();
-
-
         // ========================
         // 全局变量
         // ========================
@@ -389,7 +506,8 @@
         let users = new Map();
         let reconnectAttempts = 0;
         let maxReconnectAttempts = 5;
-        
+        let isMobile = null; // 占位符 具体判断看后面util部分的getter
+
         // DOM元素
         const userListEl = document.getElementById('userList');
         const messagesEl = document.getElementById('messages');
@@ -404,24 +522,37 @@
         const debugInfoEl = document.getElementById('debugInfo');
         const connectionStatusEl = document.getElementById('connectionStatus');
         const roomUrlEl = document.getElementById('roomUrl');
-        
+        const manageArea = document.querySelector('.manage-area');
+        const overlayEl = document.getElementById('overlay');
+
         // ========================
         // 工具函数
         // ========================
         
-        
+        // 判断是否为移动设备
+        Object.defineProperty(window, 'isMobile', {
+            get() { // 全局变量+Getter
+                return window.innerWidth <= 768;
+            }
+        });
+
         // 获取房间ID
         async function fetchRoomId() {
-            const response = await fetch("/api/room", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
+            try {
+                const response = await fetch("/api/room", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                return response.text();
+            } catch (error) {
+                debugLog("获取房间ID失败: " + error.message);
+                return null;
             }
-            return response.text();
         }
 
         // 调试日志函数
@@ -455,39 +586,36 @@
         // ========================
         
         function getWebSocketUrl() {
-		    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-		    const host = window.location.host;
-		    return `${protocol}//${host}/api/room/${roomId}/websocket`;
-		}
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const host = window.location.host;
+            return `${protocol}//${host}/api/room/${roomId}/websocket`;
+        }
 
+        async function connectWebSocket() {
+            try {
+                const wsUrl = getWebSocketUrl();
+                debugLog(`尝试连接WebSocket: ${wsUrl}`);
+                updateConnectionStatus("connecting");
+            
+                websocket = new WebSocket(wsUrl);
+                setupWebSocketHandlers();
+            
+            } catch (error) {
+                debugLog("WebSocket连接失败: " + error.message);
+                updateConnectionStatus("disconnected");
+                showNotification("连接失败: " + error.message, "error");
+            
+                // 尝试重新获取房间ID并重连
+                try {
+                    roomId = await fetchRoomId();
+                    debugLog(`重新获取房间ID: ${roomId}`);
+                    setTimeout(() => connectWebSocket(), 2000);
+                } catch (retryError) {
+                    debugLog("重新获取房间ID失败: " + retryError.message);
+                }
+            }
+        }
 
-        
-		async function connectWebSocket() {
-		    try {
-		        const wsUrl = getWebSocketUrl();
-		        debugLog(`尝试连接WebSocket: ${wsUrl}`);
-		        updateConnectionStatus("connecting");
-			
-		        websocket = new WebSocket(wsUrl);
-		        setupWebSocketHandlers();
-			
-		    } catch (error) {
-		        debugLog("WebSocket连接失败: " + error.message);
-		        updateConnectionStatus("disconnected");
-		        showNotification("连接失败: " + error.message, "error");
-			
-		        // 尝试重新获取房间ID并重连
-		        try {
-		            roomId = await fetchRoomId();
-		            debugLog(`重新获取房间ID: ${roomId}`);
-		            setTimeout(() => connectWebSocket(), 2000);
-		        } catch (retryError) {
-		            debugLog("重新获取房间ID失败: " + retryError.message);
-		        }
-		    }
-		}
-
-        
         function setupWebSocketHandlers() {
             if (!websocket) return;
             
@@ -530,7 +658,6 @@
             };
             
             websocket.onerror = (error) => {
-				console.log(error)
                 debugLog("WebSocket错误: " + error);
                 showNotification('连接错误', 'error');
             };
@@ -656,7 +783,6 @@
                         
                         if (type === 'public') {
                             const pubKey = await openpgp.readKey({ armoredKey: text });
-                            console.log(pubKey)
                             if (pubKey.isPrivate()) {
                                 throw new Error('这不是一个有效的公钥');
                             }
@@ -743,11 +869,6 @@
             }
         }
         
-        // 导出密钥
-        async function exportKey() {
-            alert("Public Key: \n" + publicKey + "\n\nPrivate Key: \n" + privateKey);
-        }
-
         // 生成新密钥
         async function generateNewKeys() {
             try {
@@ -759,10 +880,10 @@
                     type: 'ecc',
                     curve: 'curve25519',
                     userIDs: [{ 
-                        name: prompt('请输入您的名字'),
+                        name: prompt('请输入您的名字'), // 这里如果留空的话openpgp会自动生成一对 似乎不是未定义行为（？
                         email: prompt('请输入您的邮箱')
                     }],
-                    passphrase: '' // 不使用密码保护
+                    passphrase: ''
                 });
                 
                 debugLog('密钥对生成完成');
@@ -770,7 +891,6 @@
                 // 保存密钥
                 privateKey = privKey;
                 publicKey = pubKey;
-                
                 localStorage.setItem('pgpPrivateKey', privateKey);
                 localStorage.setItem('pgpPublicKey', publicKey);
                 debugLog('密钥已保存到本地存储');
@@ -779,7 +899,7 @@
                 const pubKeyObj = await openpgp.readKey({ armoredKey: publicKey });
                 const userID = pubKeyObj.users[0].userID;
                 userId = pubKeyObj.getKeyID().toHex();
-                userName = userID?.name || '匿名';
+                userName = userID?.name || '匿名用户';
                 userEmail = userID?.email || '';
                 
                 keyIdEl.textContent = userId;
@@ -795,7 +915,6 @@
             } catch (error) {
                 debugLog('生成密钥失败: ' + error.message);
                 showNotification('生成密钥失败: ' + error.message, 'error');
-                console.error('完整错误信息:', error);
             }
         }
         
@@ -847,7 +966,8 @@
                 }, '解密失败: ' + error.message);
             }
         }
-        // 从URL参数获取房间ID
+        
+        // 获取URL中的roomId
         function getRoomIdFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('room');
@@ -866,14 +986,14 @@
             messageEl.className = `message ${message.isSelf ? 'sent' : 'received'} encrypted`;
             const timeString = new Date(message.timestamp).toLocaleTimeString();
             const senderInfo = users.get(message.senderId) || {
-                name: message.senderId.slice(24, 40),
+                name: message.senderId.slice(-16),
                 email: ''
             }
 
             messageEl.innerHTML = `
                 <div class="sender-info">
                     <span class="sender-name">${senderInfo.name}
-                    <span class="sender-id">[${message.senderId.slice(24, 40)}]</span></span>
+                    <span class="sender-id">[${message.senderId.slice(-16)}]</span></span>
                     <span class="message-time">${timeString}</span>
                 </div>
                 <div class="message-text">
@@ -895,7 +1015,7 @@
             messageEl.className = `message ${isSelf ? 'sent' : 'received'}`;
             
             const senderInfo = users.get(senderId) || {
-                name: senderId.slice(24, 40),
+                name: senderId.slice(-16),
                 email: ''
             };
             
@@ -903,17 +1023,12 @@
             
             messageEl.innerHTML = `
                 <div class="sender-info">
-                    <span class="sender-name">${senderInfo.name} <span class="sender-id">[${senderId.slice(24, 40)}]</span></span>
+                    <span class="sender-name">${senderInfo.name} <span class="sender-id">[${senderId.slice(-16)}]</span></span>
                     <span class="message-time">${timeString}</span>
                 </div>
+                <div class="message-text">${text}</div>
             `;
-
-            // 创建消息文本部分
-            const messageTextEl = document.createElement('div');
-            messageTextEl.className = 'message-text';
-            messageTextEl.textContent = text; // 防XSS
-            messageEl.appendChild(messageTextEl);
-
+            
             messagesEl.appendChild(messageEl);
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
@@ -934,7 +1049,7 @@
                     userEl.classList.add('self');
                 }
                 
-                const idDisplay = user.id.slice(24, 40);
+                const idDisplay = user.id.slice(-16);
                 
                 userEl.innerHTML = `
                     <div class="user-name">${user.name}${user.id === userId ? ' (你)' : ''}</div>
@@ -1016,9 +1131,9 @@
         
         function setupEventListeners() {
             sendButtonEl.addEventListener('click', sendMessage);
-            messageInputEl.addEventListener('keypress', (e) => {
+            messageInputEl.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
+                    if (!isMobile) e.preventDefault();
                     sendMessage();
                 }
             });
@@ -1033,9 +1148,54 @@
         // 初始化
         // ========================
         
+        // 面板切换处理
+        function setupSidebarToggle() {
+            const roomName = document.getElementById('roomName');
+            const overlay = document.getElementById('overlay');
+            const manageArea = document.querySelector('.manage-area');
+            const slideToggle = document.querySelector('.slide-toggle');
+            // 展开侧边栏
+            function expandSidebar() {
+                if (isMobile) return;
+                manageArea.classList.add('expanded');
+                overlay.style.display = 'block';
+                if (slideToggle) {
+                    slideToggle.classList.add('expanded');
+                }
+            }
+            
+            // 收起侧边栏
+            function collapseSidebar() {
+                if (isMobile) return;
+                manageArea.classList.remove('expanded');
+                overlay.style.display = 'none';
+                if (slideToggle) {
+                    slideToggle.classList.remove('expanded');
+                }
+            }
+            
+            // 点击标题展开侧边栏
+            roomName.addEventListener('click', expandSidebar);
+            
+            // 点击遮罩层收起侧边栏
+            overlay.addEventListener('click', collapseSidebar);
+            
+            // 响应窗口大小变化
+            window.addEventListener('resize', () => {
+                if (isMobile) {
+                    // 在非移动端时确保面板处于正常状态
+                    collapseSidebar();
+                }
+            });
+        }
+
 		// 初始化应用
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', async function() {
             debugLog('应用初始化...');
+            
+
+            // 设置侧边栏切换
+            setupSidebarToggle();
             
             // 尝试从URL参数获取房间ID
             const roomIdFromURL = getRoomIdFromURL();
@@ -1053,28 +1213,24 @@
                     
                     // 更新URL以包含新房间ID
                     updateURLWithRoomId(roomId);
-                    showNotification(`已创建新房间: ${roomId.slice(0, 8)}...`);
+                    showNotification(`已创建聊天室: ${roomId.slice(0, 8)}...`);
                 } catch (error) {
-                    debugLog('获取房间 ID 失败: ' + error.message);
-                    showNotification('获取房间 ID 失败', 'error');
+                    debugLog('获取房间ID失败: ' + error.message);
+                    showNotification('创建聊天室失败', 'error');
                     return;
                 }
             }
             
             // 更新UI
-            document.getElementById('roomName').textContent = `E2EE 聊天室 #${roomId.slice(0, 25)}...`;
-            roomUrlEl.textContent = window.location.href;
-            
-            // 添加复制房间链接按钮
+            const roomName = document.getElementById('roomName');
+            roomName.textContent = `E2EE 聊天室 #${roomId}`;
+
             roomUrlEl.innerHTML = `
-                ${window.location.href}
-                <button id="copyRoomLink" style="margin-left: 10px; padding: 4px 8px; background: var(--primary); border: none; border-radius: 4px; color: white; cursor: pointer;">
-                    复制链接
-                </button>
+                <span id="copyRoomLink">${window.location.href} <span style="margin-left: 10px; padding: 4px 8px; background: var(--primary); border: none; border-radius: 4px; color: white; cursor: pointer;">复制链接</span></span>
             `;
             
-            // 设置复制房间链接功能
-            document.getElementById('copyRoomLink').addEventListener('click', () => {
+            // 添加复制房间链接按钮
+            document.getElementById('copyRoomLink')?.addEventListener('click', function() {
                 navigator.clipboard.writeText(window.location.href)
                     .then(() => showNotification('房间链接已复制'))
                     .catch(err => showNotification('复制失败: ' + err.message, 'error'));
@@ -1088,10 +1244,13 @@
             
             // 设置事件监听器
             setupEventListeners();
+            
+            // 输入区域自动高度调整
+            messageInputEl.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
         });
-
     </script>
 </body>
 </html>
-
-
